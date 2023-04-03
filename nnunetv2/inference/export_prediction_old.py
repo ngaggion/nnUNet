@@ -7,7 +7,6 @@ from acvl_utils.cropping_and_padding.bounding_boxes import bounding_box_to_slice
 from batchgenerators.utilities.file_and_folder_operations import load_json, isfile, save_pickle
 from nnunetv2.utilities.plans_handling.plans_handler import PlansManager, ConfigurationManager
 
-from skimage import io
 
 def export_prediction_from_softmax(predicted_array_or_file: Union[np.ndarray, str], properties_dict: dict,
                                    configuration_manager: ConfigurationManager,
@@ -62,22 +61,15 @@ def export_prediction_from_softmax(predicted_array_or_file: Union[np.ndarray, st
         # $revert transpose
         probs_reverted_cropping = probs_reverted_cropping.transpose([0] + [i + 1 for i in
                                                                            plans_manager.transpose_backward])
-
-        mask_prob = (probs_reverted_cropping[1, 0, :, :] * 255).astype(np.uint8)
-        mask_prob = io.imsave(output_file_truncated + '.png', mask_prob, check_contrast=False)
-        
-        #np.savez_compressed(output_file_truncated + '.npz', probabilities=probs_reverted_cropping)
-        #save_pickle(properties_dict, output_file_truncated + '.pkl')
-
-        del mask_prob
+        np.savez_compressed(output_file_truncated + '.npz', probabilities=probs_reverted_cropping)
+        save_pickle(properties_dict, output_file_truncated + '.pkl')
         del probs_reverted_cropping
-    else:
-        rw = plans_manager.image_reader_writer_class()
-        rw.write_seg(segmentation_reverted_cropping, output_file_truncated + dataset_json_dict_or_file['file_ending'],
+    del predicted_array_or_file
+
+    rw = plans_manager.image_reader_writer_class()
+    rw.write_seg(segmentation_reverted_cropping, output_file_truncated + dataset_json_dict_or_file['file_ending'],
                  properties_dict)
 
-    del predicted_array_or_file
-    del segmentation_reverted_cropping
 
 def resample_and_save(predicted: Union[str, np.ndarray], target_shape: List[int], output_file: str,
                       plans_manager: PlansManager, configuration_manager: ConfigurationManager, properties_dict: dict,
