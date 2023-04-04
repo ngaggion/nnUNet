@@ -5,7 +5,6 @@ from batchgenerators.utilities.file_and_folder_operations import join
 
 import nnunetv2
 from nnunetv2.imageio.natural_image_reager_writer import NaturalImage2DIO
-from nnunetv2.imageio.chronoroot_natural_image_reader_writer import ChronoRootImage2DIO
 from nnunetv2.imageio.nibabel_reader_writer import NibabelIO, NibabelIOWithReorient
 from nnunetv2.imageio.simpleitk_reader_writer import SimpleITKIO
 from nnunetv2.imageio.tif_reader_writer import Tiff3DIO
@@ -13,8 +12,7 @@ from nnunetv2.imageio.base_reader_writer import BaseReaderWriter
 from nnunetv2.utilities.find_class_by_name import recursive_find_python_class
 
 LIST_OF_IO_CLASSES = [
-    ChronoRootImage2DIO,
-    #NaturalImage2DIO,
+    NaturalImage2DIO,
     SimpleITKIO,
     Tiff3DIO,
     NibabelIO,
